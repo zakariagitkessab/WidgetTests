@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smeetz Widget - Automated Testing</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .widget-container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 700px;
+            width: 100%;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+            font-weight: 300;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 1.1em;
+        }
+        
+        /* Widget Status Indicator */
+        .status-indicator {
+            margin: 30px 0;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .status-loading {
+            background: #fff3cd;
+            color: #856404;
+            border: 2px solid #ffeaa7;
+        }
+        
+        .status-ready {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #c3e6cb;
+        }
+        
+        .status-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 2px solid #f5c6cb;
+        }
+        
+        /* Enhanced Widget Button - Based on your original style */
+        .smeetz-book-button {
+            color: #ffffff !important;
+            background: #8BDBE7 !important;
+            border: 1px solid #8BDBE7 !important;
+            padding: 12px 20px !important;
+            border-radius: 3px !important;
+            font-family: Helvetica, sans-serif !important;
+            height: 44px !important;
+            line-height: 44px !important;
+            cursor: pointer !important;
+            text-decoration: none !important;
+            display: inline-block !important;
+            transition: all 0.3s ease !important;
+            font-size: 16px !important;
+            font-weight: normal !important;
+            margin: 20px 0 !important;
+            box-shadow: 0 4px 15px rgba(139, 219, 231, 0.3) !important;
+        }
+        
+        .smeetz-book-button:hover {
+            background: #7bc8d5 !important;
+            border-color: #7bc8d5 !important;
+            transform: translateY(-1px) !important;
+            box-shadow: 0 6px 20px rgba(139, 219, 231, 0.4) !important;
+        }
+        
+        .smeetz-book-button:active {
+            transform: translateY(0) !important;
+            box-shadow: 0 2px 10px rgba(139, 219, 231, 0.3) !important;
+        }
+        
+        /* Test Information Panel */
+        .test-info {
+            margin-top: 40px;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            border-left: 5px solid #007bff;
+            text-align: left;
+        }
+        
+        .test-info h3 {
+            margin-top: 0;
+            color: #007bff;
+            font-size: 1.3em;
+        }
+        
+        .test-info code {
+            background: #e9ecef;
+            padding: 4px 8px;
+            border-radius: 5px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.9em;
+        }
+        
+        .config-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .config-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+        
+        .config-label {
+            font-weight: 600;
+            color: #495057;
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        .config-value {
+            color: #007bff;
+            font-family: monospace;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .widget-container {
+                margin: 10px;
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .smeetz-book-button {
+                padding: 15px 30px !important;
+                font-size: 16px !important;
+            }
+        }
+        
+        /* Loading Animation */
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #856404;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="widget-container">
+        <h1>🎫 Smeetz Widget</h1>
+        <p class="subtitle">Automated Testing Environment</p>
+        
+        <!-- Widget Status Indicator -->
+        <div id="widget-status" class="status-indicator status-loading">
+            <span class="loading-spinner"></span>
+            Initializing Smeetz Widget...
+        </div>
+        
+        <!-- Start Smeetz Embed Code -->
+        <script>
+        !function(e, t, n, i, p, r, s) {
+          e[n] || ((p = e[n] = function() {
+          p.p ? p.p.apply(p, arguments) : p.q.push(arguments);
+          }).q = [], p.t = 1 * new Date(), p.g = "16342", (r = t.createElement("script")).async = 1,
+          r.src = "https://test.tracker.smeetz.com/smeetz-main-widget.js", (s = t.getElementsByTagName("script")[0]).parentNode.insertBefore(r, s));
+        }(window, document, "_smtz");
+        </script>
+        
+        <!-- Widget Button with Enhanced Test Attributes -->
+        <a id="smeetz-widget-button"
+           data-testid="smeetz-book-button"
+           data-automation="widget-button"
+           data-smtz-gid="16342" 
+           data-smtz-wid="303"
+           data-smtz-cart="1" 
+           data-smtz-cart-lightbox="1" 
+           class="smeetz-book-button" 
+           target="_blank" 
+           rel="noopener noreferrer"
+           onclick="event.preventDefault(); _smtz('openwidget', 1 * new Date(), {
+             productId: '39002',
+             lightbox: true,
+             listView: false,
+             gId: '16342',
+             wId: '303',
+             codes: 'EZ8F6B3C',
+             cats: '46426',
+             cart: '1',
+             linkText: 'en: ,,, fr: ,,, de: ,,, it: ',
+             linkUrl: 'en: ,,, fr: ,,, de: ,,, it: ',
+           });">
+           🚀 Book Button
+        </a>
+        <!-- End Smeetz Embed Code -->
+        
+        <!-- Test Information Panel -->
+        <div class="test-info">
+            <h3>🔧 Automation Test Selectors</h3>
+            
+            <div class="config-grid">
+                <div class="config-item">
+                    <span class="config-label">Button ID</span>
+                    <code class="config-value">#smeetz-widget-button</code>
+                </div>
+                <div class="config-item">
+                    <span class="config-label">Test Data ID</span>
+                    <code class="config-value">[data-testid="smeetz-book-button"]</code>
+                </div>
+                <div class="config-item">
+                    <span class="config-label">Automation Selector</span>
+                    <code class="config-value">[data-automation="widget-button"]</code>
+                </div>
+                <div class="config-item">
+                    <span class="config-label">CSS Class</span>
+                    <code class="config-value">.smeetz-book-button</code>
+                </div>
+            </div>
+            
+            <h3>⚙️ Widget Configuration</h3>
+            <div class="config-grid">
+                <div class="config-item">
+                    <span class="config-label">Group ID</span>
+                    <span class="config-value">16342</span>
+                </div>
+                <div class="config-item">
+                    <span class="config-label">Widget ID</span>
+                    <span class="config-value">303</span>
+                </div>
+                <div class="config-item">
+                    <span class="config-label">Product ID</span>
+                    <span class="config-value">39002</span>
+                </div>
+                <div class="config-item">
+                    <span class="config-label">Promo Code</span>
+                    <span class="config-value">EZ8F6B3C</span>
+                </div>
+                <div class="config-item">
+                    <span class="config-label">Category</span>
+                    <span class="config-value">46426</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Enhanced Widget Status Management -->
+    <script>
+        // Widget status management and test utilities
+        const statusElement = document.getElementById('widget-status');
+        let widgetReadyTimestamp = null;
+        
+        // Enhanced widget status checker
+        function checkWidgetStatus() {
+            if (typeof window._smtz !== 'undefined') {
+                widgetReadyTimestamp = new Date().toISOString();
+                statusElement.innerHTML = '✅ Smeetz Widget Ready for Testing';
+                statusElement.className = 'status-indicator status-ready';
+                
+                // Set global test flags
+                window.smeetzWidgetReady = true;
+                window.smeetzLoadTime = Date.now();
+                
+                // Dispatch enhanced custom event
+                window.dispatchEvent(new CustomEvent('smeetzWidgetReady', {
+                    detail: { 
+                        ready: true, 
+                        timestamp: widgetReadyTimestamp,
+                        loadTime: window.smeetzLoadTime,
+                        config: {
+                            gId: '16342',
+                            wId: '303',
+                            productId: '39002',
+                            codes: 'EZ8F6B3C',
+                            cats: '46426'
+                        },
+                        selectors: {
+                            buttonId: '#smeetz-widget-button',
+                            testId: '[data-testid="smeetz-book-button"]',
+                            automation: '[data-automation="widget-button"]',
+                            cssClass: '.smeetz-book-button'
+                        }
+                    }
+                }));
+                
+                console.log('✅ Smeetz Widget loaded successfully at:', widgetReadyTimestamp);
+            } else {
+                setTimeout(checkWidgetStatus, 500);
+            }
+        }
+        
+        // Start checking with initial delay
+        setTimeout(checkWidgetStatus, 1000);
+        
+        // Enhanced timeout with better error handling
+        setTimeout(() => {
+            if (!window.smeetzWidgetReady) {
+                statusElement.innerHTML = '❌ Widget Failed to Load - Check Network Connection';
+                statusElement.className = 'status-indicator status-error';
+                
+                window.dispatchEvent(new CustomEvent('smeetzWidgetError', {
+                    detail: { 
+                        error: 'timeout', 
+                        timestamp: new Date().toISOString(),
+                        message: 'Widget failed to load within 15 seconds'
+                    }
+                }));
+                
+                console.error('❌ Smeetz Widget failed to load within timeout period');
+            }
+        }, 15000);
+        
+        // Enhanced click tracking
+        document.getElementById('smeetz-widget-button').addEventListener('click', function(e) {
+            const clickTimestamp = new Date().toISOString();
+            console.log('🎯 Smeetz widget button clicked at:', clickTimestamp);
+            
+            // Dispatch test event with more details
+            window.dispatchEvent(new CustomEvent('smeetzWidgetClicked', {
+                detail: { 
+                    timestamp: clickTimestamp,
+                    readyTime: widgetReadyTimestamp,
+                    element: e.target,
+                    coordinates: { x: e.clientX, y: e.clientY }
+                }
+            }));
+        });
+        
+        // Comprehensive test helper functions
+        window.smeetzTestHelpers = {
+            // Basic status checks
+            isWidgetReady: () => window.smeetzWidgetReady === true,
+            getLoadTime: () => window.smeetzLoadTime,
+            getReadyTimestamp: () => widgetReadyTimestamp,
+            
+            // Widget interactions
+            clickWidget: () => {
+                const button = document.getElementById('smeetz-widget-button');
+                if (button) {
+                    button.click();
+                    return true;
+                }
+                return false;
+            },
+            
+            // Configuration access
+            getWidgetConfig: () => ({
+                gId: '16342',
+                wId: '303',
+                productId: '39002',
+                codes: 'EZ8F6B3C',
+                cats: '46426'
+            }),
+            
+            // Test selectors
+            getSelectors: () => ({
+                buttonId: '#smeetz-widget-button',
+                testId: '[data-testid="smeetz-book-button"]',
+                automation: '[data-automation="widget-button"]',
+                cssClass: '.smeetz-book-button'
+            }),
+            
+            // Enhanced wait function with promise support
+            waitForWidget: (timeout = 20000) => {
+                return new Promise((resolve) => {
+                    if (window.smeetzWidgetReady) {
+                        resolve(true);
+                        return;
+                    }
+                    
+                    const startTime = Date.now();
+                    const checkReady = () => {
+                        if (window.smeetzWidgetReady) {
+                            resolve(true);
+                        } else if (Date.now() - startTime > timeout) {
+                            resolve(false);
+                        } else {
+                            setTimeout(checkReady, 100);
+                        }
+                    };
+                    checkReady();
+                });
+            },
+            
+            // Test utilities
+            simulateClick: () => {
+                const button = document.getElementById('smeetz-widget-button');
+                if (button) {
+                    const event = new MouseEvent('click', {
+                        view: window,
+                        bubbles: true,
+                        cancelable: true
+                    });
+                    button.dispatchEvent(event);
+                    return true;
+                }
+                return false;
+            },
+            
+            // Health check
+            healthCheck: () => ({
+                widgetReady: window.smeetzWidgetReady,
+                loadTime: window.smeetzLoadTime,
+                readyTimestamp: widgetReadyTimestamp,
+                buttonExists: !!document.getElementById('smeetz-widget-button'),
+                smtzDefined: typeof window._smtz !== 'undefined'
+            })
+        };
+        
+        // Global console helper for manual testing
+        console.log('🚀 Smeetz Widget Test Environment Loaded');
+        console.log('💡 Use window.smeetzTestHelpers for testing utilities');
+        console.log('📋 Available methods:', Object.keys(window.smeetzTestHelpers));
+    </script>
+</body>
+</html>
