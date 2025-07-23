@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smeetz Widget Test - Automation Ready</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .test-container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 600px;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .widget-status {
+            margin: 20px 0;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .status-loading {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        .status-ready {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        /* Test automation selectors */
+        .smeetz-book-button {
+            color: #ffffff !important;
+            background: #8BDBE7 !important;
+            border: 1px solid #8BDBE7 !important;
+            padding: 15px 30px !important;
+            border-radius: 5px !important;
+            font-family: Helvetica, sans-serif !important;
+            font-size: 18px !important;
+            font-weight: bold !important;
+            cursor: pointer !important;
+            text-decoration: none !important;
+            display: inline-block !important;
+            transition: background 0.3s !important;
+        }
+        .smeetz-book-button:hover {
+            background: #7BC8D5 !important;
+        }
+        /* Test info panel */
+        .test-info {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            border-left: 4px solid #007bff;
+        }
+        .test-info h3 {
+            margin-top: 0;
+            color: #007bff;
+        }
+        .test-info code {
+            background: #e9ecef;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>Smeetz Widget Automation Test</h1>
+        
+        <!-- Widget Status Indicator -->
+        <div id="widget-status" class="widget-status status-loading">
+            Loading Smeetz Widget...
+        </div>
+        
+        <!-- Start Smeetz Embed Code -->
+        <script>
+        !function(e, t, n, i, p, r, s) {
+            e[n] || ((p = e[n] = function() {
+            p.p ? p.p.apply(p, arguments) : p.q.push(arguments);
+            }).q = [], p.t = 1 * new Date(), p.g = "16342", (r = t.createElement("script")).async = 1,
+            r.src = "https://test.tracker.smeetz.com/smeetz-main-widget.js", (s = t.getElementsByTagName("script")[0]).parentNode.insertBefore(r, s));
+        }(window, document, "_smtz");
+        </script>
+        
+        <!-- Widget Button with Test-Friendly Attributes -->
+        <a id="smeetz-widget-button"
+           class="smeetz-book-button"
+           data-testid="smeetz-book-button"
+           data-smtz-gid="16342" 
+           data-smtz-wid="303"
+           data-smtz-cart="1" 
+           data-smtz-cart-lightbox="1" 
+           target="_blank" 
+           rel="noopener noreferrer"
+           onclick="event.preventDefault(); _smtz('openwidget', 1 * new Date(), {
+               productId: '39002',
+               lightbox: true,
+               listView: false,
+               gId: '16342',
+               wId: '303',
+               codes: 'EZ8F6B3C',
+               cats: '46426',
+               cart: '1',
+               linkText: 'en: ,,, fr: ,,, de: ,,, it: ',
+               linkUrl: 'en: ,,, fr: ,,, de: ,,, it: ',
+           });">
+           Book Now - Test Widget
+        </a>
+        <!-- End Smeetz Embed Code -->
+        
+        <!-- Test Information Panel -->
+        <div class="test-info">
+            <h3>Automation Test Selectors</h3>
+            <p><strong>Button ID:</strong> <code>#smeetz-widget-button</code></p>
+            <p><strong>Test Data ID:</strong> <code>[data-testid="smeetz-book-button"]</code></p>
+            <p><strong>CSS Class:</strong> <code>.smeetz-book-button</code></p>
+            <p><strong>Widget Config:</strong></p>
+            <ul style="text-align: left; display: inline-block;">
+                <li>Group ID: 16342</li>
+                <li>Widget ID: 303</li>
+                <li>Product ID: 39002</li>
+                <li>Promo Code: EZ8F6B3C</li>
+                <li>Category: 46426</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Widget Status Management Script -->
+    <script>
+        // Widget status management for testing
+        const statusElement = document.getElementById('widget-status');
+        
+        // Check if Smeetz script loaded
+        function checkWidgetStatus() {
+            if (typeof window._smtz !== 'undefined') {
+                statusElement.textContent = 'Smeetz Widget Ready ✓';
+                statusElement.className = 'widget-status status-ready';
+                
+                // Add global test flag
+                window.smeetzWidgetReady = true;
+                
+                // Dispatch custom event for test automation
+                window.dispatchEvent(new CustomEvent('smeetzWidgetReady', {
+                    detail: { 
+                        ready: true, 
+                        timestamp: new Date().toISOString(),
+                        config: {
+                            gId: '16342',
+                            wId: '303',
+                            productId: '39002',
+                            codes: 'EZ8F6B3C'
+                        }
+                    }
+                }));
+            } else {
+                setTimeout(checkWidgetStatus, 500);
+            }
+        }
+        
+        // Start checking after a brief delay
+        setTimeout(checkWidgetStatus, 1000);
+        
+        // Timeout fallback
+        setTimeout(() => {
+            if (!window.smeetzWidgetReady) {
+                statusElement.textContent = 'Widget Load Timeout - Check Network';
+                statusElement.className = 'widget-status status-error';
+                
+                window.dispatchEvent(new CustomEvent('smeetzWidgetError', {
+                    detail: { error: 'timeout', timestamp: new Date().toISOString() }
+                }));
+            }
+        }, 10000);
+        
+        // Add click tracking for test automation
+        document.getElementById('smeetz-widget-button').addEventListener('click', function(e) {
+            console.log('Smeetz widget button clicked at:', new Date().toISOString());
+            
+            // Dispatch test event
+            window.dispatchEvent(new CustomEvent('smeetzWidgetClicked', {
+                detail: { timestamp: new Date().toISOString() }
+            }));
+        });
+        
+        // Global test helper functions
+        window.smeetzTestHelpers = {
+            isWidgetReady: () => window.smeetzWidgetReady === true,
+            clickWidget: () => document.getElementById('smeetz-widget-button').click(),
+            getWidgetConfig: () => ({
+                gId: '16342',
+                wId: '303',
+                productId: '39002',
+                codes: 'EZ8F6B3C',
+                cats: '46426'
+            }),
+            waitForWidget: (callback, timeout = 15000) => {
+                const startTime = Date.now();
+                const checkReady = () => {
+                    if (window.smeetzWidgetReady) {
+                        callback(true);
+                    } else if (Date.now() - startTime > timeout) {
+                        callback(false);
+                    } else {
+                        setTimeout(checkReady, 100);
+                    }
+                };
+                checkReady();
+            }
+        };
+    </script>
+</body>
+</html>
