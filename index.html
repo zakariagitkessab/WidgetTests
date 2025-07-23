@@ -66,6 +66,49 @@
             border: 2px solid #f5c6cb;
         }
         
+        /* Zoom Controls */
+        .zoom-controls {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .zoom-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        
+        .zoom-btn:hover {
+            background: #0056b3;
+            transform: translateY(-1px);
+        }
+        
+        .zoom-btn:active {
+            transform: translateY(0);
+        }
+        
+        #zoom-level {
+            font-weight: bold;
+            font-size: 16px;
+            color: #495057;
+            min-width: 50px;
+            text-align: center;
+        }
+        
         /* Enhanced Widget Button - Based on your original style */
         .smeetz-book-button {
             color: #ffffff !important;
@@ -187,6 +230,14 @@
     <div class="widget-container">
         <h1>🎫 Smeetz Widget</h1>
         <p class="subtitle">Automated Testing Environment</p>
+        
+        <!-- Zoom Controls -->
+        <div class="zoom-controls">
+            <button id="zoom-out" class="zoom-btn">🔍➖ Zoom Out</button>
+            <span id="zoom-level">60%</span>
+            <button id="zoom-in" class="zoom-btn">🔍➕ Zoom In</button>
+            <button id="zoom-reset" class="zoom-btn">↻ Reset</button>
+        </div>
         
         <!-- Widget Status Indicator -->
         <div id="widget-status" class="status-indicator status-loading">
@@ -362,6 +413,66 @@
             }));
         });
         
+        // Zoom Control Functionality
+        let currentZoom = 60;
+        const zoomStep = 10;
+        const minZoom = 50;
+        const maxZoom = 200;
+        
+        function updateZoom(newZoom) {
+            currentZoom = Math.max(minZoom, Math.min(maxZoom, newZoom));
+            document.body.style.zoom = currentZoom + '%';
+            document.getElementById('zoom-level').textContent = currentZoom + '%';
+            
+            // Store zoom preference
+            localStorage.setItem('smeetzWidgetZoom', currentZoom);
+            
+            console.log('🔍 Zoom level changed to:', currentZoom + '%');
+        }
+        
+        // Zoom control event listeners
+        document.getElementById('zoom-out').addEventListener('click', () => {
+            updateZoom(currentZoom - zoomStep);
+        });
+        
+        document.getElementById('zoom-in').addEventListener('click', () => {
+            updateZoom(currentZoom + zoomStep);
+        });
+        
+        document.getElementById('zoom-reset').addEventListener('click', () => {
+            updateZoom(100);
+        });
+        
+        // Keyboard shortcuts for zoom
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey || e.metaKey) {
+                switch(e.key) {
+                    case '-':
+                    case '_':
+                        e.preventDefault();
+                        updateZoom(currentZoom - zoomStep);
+                        break;
+                    case '+':
+                    case '=':
+                        e.preventDefault();
+                        updateZoom(currentZoom + zoomStep);
+                        break;
+                    case '0':
+                        e.preventDefault();
+                        updateZoom(100);
+                        break;
+                }
+            }
+        });
+        
+        // Load saved zoom preference or default to 60%
+        const savedZoom = localStorage.getItem('smeetzWidgetZoom');
+        if (savedZoom) {
+            updateZoom(parseInt(savedZoom));
+        } else {
+            updateZoom(60); // Default to 60%
+        }
+        
         // Comprehensive test helper functions
         window.smeetzTestHelpers = {
             // Basic status checks
@@ -440,7 +551,30 @@
                 readyTimestamp: widgetReadyTimestamp,
                 buttonExists: !!document.getElementById('smeetz-widget-button'),
                 smtzDefined: typeof window._smtz !== 'undefined'
-            })
+            }),
+            
+            // Zoom controls for testing
+            setZoom: (level) => {
+                updateZoom(level);
+                return currentZoom;
+            },
+            
+            getZoom: () => currentZoom,
+            
+            zoomOut: () => {
+                updateZoom(currentZoom - zoomStep);
+                return currentZoom;
+            },
+            
+            zoomIn: () => {
+                updateZoom(currentZoom + zoomStep);
+                return currentZoom;
+            },
+            
+            resetZoom: () => {
+                updateZoom(100);
+                return currentZoom;
+            }
         };
         
         // Global console helper for manual testing
