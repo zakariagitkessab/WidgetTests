@@ -3,494 +3,524 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smeetz Widget - Automated Testing</title>
+    <title>Smeetz Widget Test - Enhanced for Automation</title>
     <style>
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: Arial, sans-serif;
             margin: 0;
             padding: 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
+            background-color: #f5f5f5;
             display: flex;
             justify-content: center;
             align-items: center;
+            min-height: 100vh;
         }
-        
-        .widget-container {
+        .test-container {
             background: white;
             padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
             text-align: center;
-            max-width: 700px;
+            max-width: 800px;
             width: 100%;
         }
-        
         h1 {
             color: #333;
-            margin-bottom: 10px;
-            font-size: 2.5em;
-            font-weight: 300;
+            margin-bottom: 30px;
         }
-        
-        .subtitle {
-            color: #666;
-            margin-bottom: 40px;
-            font-size: 1.1em;
-        }
-        
-        /* Widget Status Indicator */
-        .status-indicator {
-            margin: 30px 0;
-            padding: 15px;
-            border-radius: 10px;
-            font-weight: 600;
+        .widget-status {
+            margin: 20px 0;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
             transition: all 0.3s ease;
         }
-        
         .status-loading {
             background: #fff3cd;
             color: #856404;
-            border: 2px solid #ffeaa7;
+            border: 1px solid #ffeaa7;
         }
-        
         .status-ready {
             background: #d4edda;
             color: #155724;
-            border: 2px solid #c3e6cb;
+            border: 1px solid #c3e6cb;
         }
-        
         .status-error {
             background: #f8d7da;
             color: #721c24;
-            border: 2px solid #f5c6cb;
+            border: 1px solid #f5c6cb;
+        }
+        .status-iframe-loaded {
+            background: #cfe2ff;
+            color: #084298;
+            border: 1px solid #b6d4fe;
         }
         
-        /* Zoom Controls */
-        .zoom-controls {
+        /* Test automation selectors */
+        .smeetz-book-button {
+            color: #ffffff !important;
+            background: #8BDBE7 !important;
+            border: 1px solid #8BDBE7 !important;
+            padding: 15px 30px !important;
+            border-radius: 5px !important;
+            font-family: Helvetica, sans-serif !important;
+            font-size: 18px !important;
+            font-weight: bold !important;
+            cursor: pointer !important;
+            text-decoration: none !important;
+            display: inline-block !important;
+            transition: all 0.3s !important;
             margin: 20px 0;
-            padding: 15px;
-            background: #f8f9fa;
-            border-radius: 10px;
-            border: 2px solid #e9ecef;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-            flex-wrap: wrap;
+        }
+        .smeetz-book-button:hover {
+            background: #7BC8D5 !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(139, 219, 231, 0.3);
+        }
+        .smeetz-book-button:active {
+            transform: translateY(0);
         }
         
-        .zoom-btn {
-            background: #007bff;
+        /* Test info panel */
+        .test-info {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            border-left: 4px solid #007bff;
+            text-align: left;
+        }
+        .test-info h3 {
+            margin-top: 0;
+            color: #007bff;
+            text-align: center;
+        }
+        .test-info code {
+            background: #e9ecef;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        
+        /* Debug panel */
+        .debug-panel {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            max-width: 300px;
+            border: 2px solid #007bff;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .debug-panel h4 {
+            margin-top: 0;
+            color: #007bff;
+        }
+        .debug-info {
+            font-family: monospace;
+            font-size: 12px;
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            word-break: break-all;
+        }
+        .debug-button {
+            background: #28a745;
             color: white;
             border: none;
             padding: 8px 16px;
             border-radius: 5px;
             cursor: pointer;
+            margin: 5px;
             font-size: 14px;
-            font-weight: 500;
-            transition: all 0.2s ease;
+        }
+        .debug-button:hover {
+            background: #218838;
         }
         
-        .zoom-btn:hover {
-            background: #0056b3;
-            transform: translateY(-1px);
-        }
-        
-        .zoom-btn:active {
-            transform: translateY(0);
-        }
-        
-        #zoom-level {
-            font-weight: bold;
-            font-size: 16px;
-            color: #495057;
-            min-width: 50px;
-            text-align: center;
-        }
-        
-        /* Enhanced Widget Button - Based on your original style */
-        .smeetz-book-button {
-            color: #ffffff !important;
-            background: #8BDBE7 !important;
-            border: 1px solid #8BDBE7 !important;
-            padding: 12px 20px !important;
-            border-radius: 3px !important;
-            font-family: Helvetica, sans-serif !important;
-            height: 44px !important;
-            line-height: 44px !important;
-            cursor: pointer !important;
-            text-decoration: none !important;
-            display: inline-block !important;
-            transition: all 0.3s ease !important;
-            font-size: 16px !important;
-            font-weight: normal !important;
-            margin: 20px 0 !important;
-            box-shadow: 0 4px 15px rgba(139, 219, 231, 0.3) !important;
-        }
-        
-        .smeetz-book-button:hover {
-            background: #7bc8d5 !important;
-            border-color: #7bc8d5 !important;
-            transform: translateY(-1px) !important;
-            box-shadow: 0 6px 20px rgba(139, 219, 231, 0.4) !important;
-        }
-        
-        .smeetz-book-button:active {
-            transform: translateY(0) !important;
-            box-shadow: 0 2px 10px rgba(139, 219, 231, 0.3) !important;
-        }
-        
-        /* Test Information Panel */
-        .test-info {
-            margin-top: 40px;
-            padding: 25px;
-            background: #f8f9fa;
-            border-radius: 15px;
-            border-left: 5px solid #007bff;
-            text-align: left;
-        }
-        
-        .test-info h3 {
-            margin-top: 0;
-            color: #007bff;
-            font-size: 1.3em;
-        }
-        
-        .test-info code {
-            background: #e9ecef;
-            padding: 4px 8px;
+        /* Iframe detection styles */
+        .iframe-indicator {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0, 123, 255, 0.9);
+            color: white;
+            padding: 10px 20px;
             border-radius: 5px;
-            font-family: 'Monaco', 'Menlo', monospace;
-            font-size: 0.9em;
+            font-size: 14px;
+            display: none;
+            z-index: 10000;
         }
-        
-        .config-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-top: 20px;
-        }
-        
-        .config-item {
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-            border: 1px solid #e9ecef;
-        }
-        
-        .config-label {
-            font-weight: 600;
-            color: #495057;
+        .iframe-indicator.visible {
             display: block;
-            margin-bottom: 5px;
         }
         
-        .config-value {
-            color: #007bff;
-            font-family: monospace;
-        }
-        
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .widget-container {
-                margin: 10px;
-                padding: 20px;
-            }
-            
-            h1 {
-                font-size: 2em;
-            }
-            
-            .smeetz-book-button {
-                padding: 15px 30px !important;
-                font-size: 16px !important;
-            }
-        }
-        
-        /* Loading Animation */
-        .loading-spinner {
+        /* Loading spinner */
+        .spinner {
             display: inline-block;
             width: 20px;
             height: 20px;
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #856404;
+            border: 3px solid rgba(0,0,0,.1);
             border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-right: 10px;
+            border-top-color: #007bff;
+            animation: spin 1s ease-in-out infinite;
+            margin-left: 10px;
         }
-        
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            to { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
-    <div class="widget-container">
-        <h1>🎫 Smeetz Widget</h1>
-        <p class="subtitle">Automated Testing Environment</p>
-        
-        <!-- Zoom Controls -->
-        <div class="zoom-controls">
-            <button id="zoom-out" class="zoom-btn">🔍➖ Zoom Out</button>
-            <span id="zoom-level">60%</span>
-            <button id="zoom-in" class="zoom-btn">🔍➕ Zoom In</button>
-            <button id="zoom-reset" class="zoom-btn">↻ Reset</button>
-        </div>
+    <div class="test-container">
+        <h1>🎟️ Smeetz Widget - Enhanced Test Environment</h1>
         
         <!-- Widget Status Indicator -->
-        <div id="widget-status" class="status-indicator status-loading">
-            <span class="loading-spinner"></span>
-            Initializing Smeetz Widget...
+        <div id="widget-status" class="widget-status status-loading" data-testid="widget-status">
+            Loading Smeetz Widget... <span class="spinner"></span>
         </div>
         
         <!-- Start Smeetz Embed Code -->
         <script>
         !function(e, t, n, i, p, r, s) {
-          e[n] || ((p = e[n] = function() {
-          p.p ? p.p.apply(p, arguments) : p.q.push(arguments);
-          }).q = [], p.t = 1 * new Date(), p.g = "16342", (r = t.createElement("script")).async = 1,
-          r.src = "https://test.tracker.smeetz.com/smeetz-main-widget.js", (s = t.getElementsByTagName("script")[0]).parentNode.insertBefore(r, s));
+            e[n] || ((p = e[n] = function() {
+            p.p ? p.p.apply(p, arguments) : p.q.push(arguments);
+            }).q = [], p.t = 1 * new Date(), p.g = "16342", (r = t.createElement("script")).async = 1,
+            r.src = "https://test.tracker.smeetz.com/smeetz-main-widget.js", (s = t.getElementsByTagName("script")[0]).parentNode.insertBefore(r, s));
         }(window, document, "_smtz");
         </script>
         
-        <!-- Widget Button with Enhanced Test Attributes -->
+        <!-- Widget Button with Test-Friendly Attributes -->
         <a id="smeetz-widget-button"
+           class="smeetz-book-button"
            data-testid="smeetz-book-button"
-           data-automation="widget-button"
            data-smtz-gid="16342" 
            data-smtz-wid="303"
            data-smtz-cart="1" 
            data-smtz-cart-lightbox="1" 
-           class="smeetz-book-button" 
            target="_blank" 
            rel="noopener noreferrer"
+           aria-label="Open Smeetz booking widget"
+           data-automation-id="smeetz-book-now"
            onclick="event.preventDefault(); _smtz('openwidget', 1 * new Date(), {
-             productId: '39002',
-             lightbox: true,
-             listView: false,
-             gId: '16342',
-             wId: '303',
-             codes: 'EZ8F6B3C',
-             cats: '46426',
-             cart: '1',
-             linkText: 'en: ,,, fr: ,,, de: ,,, it: ',
-             linkUrl: 'en: ,,, fr: ,,, de: ,,, it: ',
+               productId: '39002',
+               lightbox: true,
+               listView: false,
+               gId: '16342',
+               wId: '303',
+               codes: 'EZ8F6B3C',
+               cats: '46426',
+               cart: '1',
+               linkText: 'en: ,,, fr: ,,, de: ,,, it: ',
+               linkUrl: 'en: ,,, fr: ,,, de: ,,, it: ',
            });">
-           🚀 Book Button
+           📅 Book Now - Test Widget
         </a>
         <!-- End Smeetz Embed Code -->
         
         <!-- Test Information Panel -->
         <div class="test-info">
-            <h3>🔧 Automation Test Selectors</h3>
-            
-            <div class="config-grid">
-                <div class="config-item">
-                    <span class="config-label">Button ID</span>
-                    <code class="config-value">#smeetz-widget-button</code>
-                </div>
-                <div class="config-item">
-                    <span class="config-label">Test Data ID</span>
-                    <code class="config-value">[data-testid="smeetz-book-button"]</code>
-                </div>
-                <div class="config-item">
-                    <span class="config-label">Automation Selector</span>
-                    <code class="config-value">[data-automation="widget-button"]</code>
-                </div>
-                <div class="config-item">
-                    <span class="config-label">CSS Class</span>
-                    <code class="config-value">.smeetz-book-button</code>
-                </div>
-            </div>
-            
-            <h3>⚙️ Widget Configuration</h3>
-            <div class="config-grid">
-                <div class="config-item">
-                    <span class="config-label">Group ID</span>
-                    <span class="config-value">16342</span>
-                </div>
-                <div class="config-item">
-                    <span class="config-label">Widget ID</span>
-                    <span class="config-value">303</span>
-                </div>
-                <div class="config-item">
-                    <span class="config-label">Product ID</span>
-                    <span class="config-value">39002</span>
-                </div>
-                <div class="config-item">
-                    <span class="config-label">Promo Code</span>
-                    <span class="config-value">EZ8F6B3C</span>
-                </div>
-                <div class="config-item">
-                    <span class="config-label">Category</span>
-                    <span class="config-value">46426</span>
-                </div>
-            </div>
+            <h3>🧪 Automation Test Information</h3>
+            <p><strong>Button Selectors:</strong></p>
+            <ul>
+                <li>ID: <code>#smeetz-widget-button</code></li>
+                <li>Test ID: <code>[data-testid="smeetz-book-button"]</code></li>
+                <li>CSS Class: <code>.smeetz-book-button</code></li>
+                <li>Automation ID: <code>[data-automation-id="smeetz-book-now"]</code></li>
+            </ul>
+            <p><strong>Widget Configuration:</strong></p>
+            <ul>
+                <li>Group ID: <code>16342</code></li>
+                <li>Widget ID: <code>303</code></li>
+                <li>Product ID: <code>39002</code></li>
+                <li>Promo Code: <code>EZ8F6B3C</code></li>
+                <li>Category: <code>46426</code></li>
+            </ul>
+            <p><strong>Expected Iframe:</strong></p>
+            <ul>
+                <li>Class: <code>.smtz-lightbox-iframe</code></li>
+                <li>Calendar: <code>.vdp-datepicker__calendar</code></li>
+                <li>Day cells: <code>span.cell.day</code></li>
+                <li>Time slots: <code>.slot-times .slot-time</code></li>
+            </ul>
         </div>
     </div>
 
-    <!-- Enhanced Widget Status Management -->
+    <!-- Debug Panel -->
+    <div class="debug-panel" data-testid="debug-panel">
+        <h4>🐛 Debug Console</h4>
+        <div id="debug-status" class="debug-info">
+            Waiting for widget...
+        </div>
+        <button class="debug-button" onclick="debugWidget()">Check Widget</button>
+        <button class="debug-button" onclick="debugIframe()">Check Iframe</button>
+        <button class="debug-button" onclick="simulateCalendarClick()">Test Day 30 Click</button>
+        <button class="debug-button" onclick="clearDebugLog()">Clear Log</button>
+        <div id="debug-log" style="margin-top: 10px;"></div>
+    </div>
+
+    <!-- Iframe Indicator -->
+    <div id="iframe-indicator" class="iframe-indicator" data-testid="iframe-indicator">
+        ✓ Iframe Detected
+    </div>
+
+    <!-- Enhanced Widget Status Management Script -->
     <script>
-        // Widget status management and test utilities
+        // Global test state
+        window.smeetzTestState = {
+            widgetLoaded: false,
+            iframeDetected: false,
+            calendarVisible: false,
+            lastAction: null,
+            logs: []
+        };
+
+        // Logging function
+        function debugLog(message, type = 'info') {
+            const timestamp = new Date().toISOString();
+            const logEntry = { timestamp, message, type };
+            window.smeetzTestState.logs.push(logEntry);
+            
+            console.log(`[${type.toUpperCase()}] ${timestamp}: ${message}`);
+            
+            // Update debug panel
+            const debugLog = document.getElementById('debug-log');
+            const logDiv = document.createElement('div');
+            logDiv.className = 'debug-info';
+            logDiv.style.borderLeft = `3px solid ${type === 'error' ? '#dc3545' : type === 'success' ? '#28a745' : '#007bff'}`;
+            logDiv.innerHTML = `<strong>${timestamp.split('T')[1].split('.')[0]}</strong><br>${message}`;
+            debugLog.appendChild(logDiv);
+            
+            // Keep only last 10 logs in UI
+            while (debugLog.children.length > 10) {
+                debugLog.removeChild(debugLog.firstChild);
+            }
+        }
+
+        // Widget status management
         const statusElement = document.getElementById('widget-status');
-        let widgetReadyTimestamp = null;
         
-        // Enhanced widget status checker
+        // Check if Smeetz script loaded
         function checkWidgetStatus() {
-            if (typeof window._smtz !== 'undefined') {
-                widgetReadyTimestamp = new Date().toISOString();
-                statusElement.innerHTML = '✅ Smeetz Widget Ready for Testing';
-                statusElement.className = 'status-indicator status-ready';
+            if (typeof window._smtz !== 'undefined' && window._smtz.p) {
+                statusElement.textContent = '✅ Smeetz Widget Ready';
+                statusElement.className = 'widget-status status-ready';
+                statusElement.removeChild(statusElement.querySelector('.spinner'));
                 
-                // Set global test flags
+                window.smeetzTestState.widgetLoaded = true;
                 window.smeetzWidgetReady = true;
-                window.smeetzLoadTime = Date.now();
                 
-                // Dispatch enhanced custom event
+                debugLog('Smeetz widget loaded successfully', 'success');
+                
+                // Dispatch custom event
                 window.dispatchEvent(new CustomEvent('smeetzWidgetReady', {
                     detail: { 
                         ready: true, 
-                        timestamp: widgetReadyTimestamp,
-                        loadTime: window.smeetzLoadTime,
+                        timestamp: new Date().toISOString(),
                         config: {
                             gId: '16342',
                             wId: '303',
                             productId: '39002',
-                            codes: 'EZ8F6B3C',
-                            cats: '46426'
-                        },
-                        selectors: {
-                            buttonId: '#smeetz-widget-button',
-                            testId: '[data-testid="smeetz-book-button"]',
-                            automation: '[data-automation="widget-button"]',
-                            cssClass: '.smeetz-book-button'
+                            codes: 'EZ8F6B3C'
                         }
                     }
                 }));
                 
-                console.log('✅ Smeetz Widget loaded successfully at:', widgetReadyTimestamp);
+                // Start monitoring for iframe
+                startIframeMonitoring();
             } else {
                 setTimeout(checkWidgetStatus, 500);
             }
         }
         
-        // Start checking with initial delay
+        // Monitor for iframe creation
+        function startIframeMonitoring() {
+            const observer = new MutationObserver((mutations) => {
+                mutations.forEach((mutation) => {
+                    if (mutation.type === 'childList') {
+                        mutation.addedNodes.forEach((node) => {
+                            if (node.tagName === 'IFRAME' && node.classList.contains('smtz-lightbox-iframe')) {
+                                handleIframeDetected(node);
+                            }
+                        });
+                    }
+                });
+            });
+            
+            observer.observe(document.body, {
+                childList: true,
+                subtree: true
+            });
+            
+            debugLog('Started iframe monitoring', 'info');
+        }
+        
+        // Handle iframe detection
+        function handleIframeDetected(iframe) {
+            window.smeetzTestState.iframeDetected = true;
+            
+            debugLog('Iframe detected!', 'success');
+            
+            statusElement.textContent = '📋 Widget Iframe Loaded';
+            statusElement.className = 'widget-status status-iframe-loaded';
+            
+            document.getElementById('iframe-indicator').classList.add('visible');
+            
+            // Add test attributes to iframe
+            iframe.setAttribute('data-testid', 'smeetz-widget-iframe');
+            iframe.setAttribute('data-loaded', 'true');
+            
+            // Try to enhance iframe content after load
+            iframe.addEventListener('load', () => {
+                debugLog('Iframe content loaded', 'success');
+                setTimeout(() => attemptIframeEnhancement(iframe), 1000);
+            });
+            
+            // Dispatch event
+            window.dispatchEvent(new CustomEvent('smeetzIframeReady', {
+                detail: {
+                    iframe: iframe,
+                    timestamp: new Date().toISOString()
+                }
+            }));
+        }
+        
+        // Attempt to enhance iframe content
+        function attemptIframeEnhancement(iframe) {
+            try {
+                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                if (iframeDoc) {
+                    debugLog('Iframe content accessible - enhancing...', 'info');
+                    
+                    // Add test IDs to calendars
+                    const calendars = iframeDoc.querySelectorAll('.vdp-datepicker__calendar');
+                    calendars.forEach((cal, index) => {
+                        cal.setAttribute('data-testid', `calendar-${index}`);
+                        debugLog(`Enhanced calendar ${index}`, 'info');
+                    });
+                    
+                    // Add test IDs to day cells
+                    const days = iframeDoc.querySelectorAll('span.cell.day');
+                    days.forEach(day => {
+                        const dayNum = day.textContent.trim();
+                        if (dayNum) {
+                            day.setAttribute('data-testid', `day-${dayNum}`);
+                            day.setAttribute('data-day', dayNum);
+                        }
+                    });
+                    
+                    debugLog('Iframe enhancement complete', 'success');
+                }
+            } catch (e) {
+                debugLog(`Cannot enhance iframe (CORS): ${e.message}`, 'error');
+            }
+        }
+        
+        // Start checking after a brief delay
         setTimeout(checkWidgetStatus, 1000);
         
-        // Enhanced timeout with better error handling
+        // Timeout fallback
         setTimeout(() => {
             if (!window.smeetzWidgetReady) {
-                statusElement.innerHTML = '❌ Widget Failed to Load - Check Network Connection';
-                statusElement.className = 'status-indicator status-error';
+                statusElement.textContent = '❌ Widget Load Timeout';
+                statusElement.className = 'widget-status status-error';
+                if (statusElement.querySelector('.spinner')) {
+                    statusElement.removeChild(statusElement.querySelector('.spinner'));
+                }
+                
+                debugLog('Widget load timeout', 'error');
                 
                 window.dispatchEvent(new CustomEvent('smeetzWidgetError', {
-                    detail: { 
-                        error: 'timeout', 
-                        timestamp: new Date().toISOString(),
-                        message: 'Widget failed to load within 15 seconds'
-                    }
+                    detail: { error: 'timeout', timestamp: new Date().toISOString() }
                 }));
-                
-                console.error('❌ Smeetz Widget failed to load within timeout period');
             }
         }, 15000);
         
-        // Enhanced click tracking
+        // Add click tracking
         document.getElementById('smeetz-widget-button').addEventListener('click', function(e) {
-            const clickTimestamp = new Date().toISOString();
-            console.log('🎯 Smeetz widget button clicked at:', clickTimestamp);
+            window.smeetzTestState.lastAction = 'button_click';
+            debugLog('Widget button clicked', 'info');
             
-            // Dispatch test event with more details
             window.dispatchEvent(new CustomEvent('smeetzWidgetClicked', {
-                detail: { 
-                    timestamp: clickTimestamp,
-                    readyTime: widgetReadyTimestamp,
-                    element: e.target,
-                    coordinates: { x: e.clientX, y: e.clientY }
-                }
+                detail: { timestamp: new Date().toISOString() }
             }));
         });
         
-        // Zoom Control Functionality
-        let currentZoom = 60;
-        const zoomStep = 10;
-        const minZoom = 50;
-        const maxZoom = 200;
-        
-        function updateZoom(newZoom) {
-            currentZoom = Math.max(minZoom, Math.min(maxZoom, newZoom));
-            document.body.style.zoom = currentZoom + '%';
-            document.getElementById('zoom-level').textContent = currentZoom + '%';
-            
-            // Store zoom preference
-            localStorage.setItem('smeetzWidgetZoom', currentZoom);
-            
-            console.log('🔍 Zoom level changed to:', currentZoom + '%');
+        // Debug functions
+        function debugWidget() {
+            const info = {
+                widgetReady: window.smeetzWidgetReady,
+                smtzDefined: typeof window._smtz !== 'undefined',
+                smtzLoaded: window._smtz && window._smtz.p ? true : false,
+                state: window.smeetzTestState
+            };
+            document.getElementById('debug-status').textContent = JSON.stringify(info, null, 2);
+            debugLog('Widget debug info updated', 'info');
         }
         
-        // Zoom control event listeners
-        document.getElementById('zoom-out').addEventListener('click', () => {
-            updateZoom(currentZoom - zoomStep);
-        });
-        
-        document.getElementById('zoom-in').addEventListener('click', () => {
-            updateZoom(currentZoom + zoomStep);
-        });
-        
-        document.getElementById('zoom-reset').addEventListener('click', () => {
-            updateZoom(100);
-        });
-        
-        // Keyboard shortcuts for zoom
-        document.addEventListener('keydown', (e) => {
-            if (e.ctrlKey || e.metaKey) {
-                switch(e.key) {
-                    case '-':
-                    case '_':
-                        e.preventDefault();
-                        updateZoom(currentZoom - zoomStep);
-                        break;
-                    case '+':
-                    case '=':
-                        e.preventDefault();
-                        updateZoom(currentZoom + zoomStep);
-                        break;
-                    case '0':
-                        e.preventDefault();
-                        updateZoom(100);
-                        break;
-                }
+        function debugIframe() {
+            const iframe = document.querySelector('iframe.smtz-lightbox-iframe');
+            if (!iframe) {
+                debugLog('No iframe found', 'error');
+                return;
             }
-        });
-        
-        // Load saved zoom preference or default to 60%
-        const savedZoom = localStorage.getItem('smeetzWidgetZoom');
-        if (savedZoom) {
-            updateZoom(parseInt(savedZoom));
-        } else {
-            updateZoom(60); // Default to 60%
+            
+            try {
+                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                const calendars = iframeDoc.querySelectorAll('.vdp-datepicker__calendar');
+                const info = {
+                    iframeFound: true,
+                    accessible: true,
+                    calendars: calendars.length,
+                    url: iframe.src
+                };
+                document.getElementById('debug-status').textContent = JSON.stringify(info, null, 2);
+                debugLog(`Iframe info: ${calendars.length} calendars found`, 'success');
+            } catch (e) {
+                debugLog(`Iframe not accessible (CORS): ${e.message}`, 'error');
+                document.getElementById('debug-status').textContent = 'Iframe found but not accessible (CORS)';
+            }
         }
         
-        // Comprehensive test helper functions
-        window.smeetzTestHelpers = {
-            // Basic status checks
-            isWidgetReady: () => window.smeetzWidgetReady === true,
-            getLoadTime: () => window.smeetzLoadTime,
-            getReadyTimestamp: () => widgetReadyTimestamp,
+        function simulateCalendarClick() {
+            const iframe = document.querySelector('iframe.smtz-lightbox-iframe');
+            if (!iframe) {
+                debugLog('No iframe found - click the booking button first', 'error');
+                return;
+            }
             
-            // Widget interactions
-            clickWidget: () => {
-                const button = document.getElementById('smeetz-widget-button');
-                if (button) {
-                    button.click();
-                    return true;
+            try {
+                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                const day30 = Array.from(iframeDoc.querySelectorAll('span.cell.day'))
+                    .find(el => el.textContent.trim() === '30' && !el.classList.contains('disabled'));
+                
+                if (day30) {
+                    day30.click();
+                    debugLog('Clicked day 30 successfully', 'success');
+                } else {
+                    debugLog('Day 30 not found or disabled', 'error');
                 }
-                return false;
-            },
-            
-            // Configuration access
+            } catch (e) {
+                debugLog(`Cannot access iframe for clicking: ${e.message}`, 'error');
+            }
+        }
+        
+        function clearDebugLog() {
+            document.getElementById('debug-log').innerHTML = '';
+            window.smeetzTestState.logs = [];
+            debugLog('Debug log cleared', 'info');
+        }
+        
+        // Global test helper functions
+        window.smeetzTestHelpers = {
+            isWidgetReady: () => window.smeetzWidgetReady === true,
+            clickWidget: () => document.getElementById('smeetz-widget-button').click(),
             getWidgetConfig: () => ({
                 gId: '16342',
                 wId: '303',
@@ -498,29 +528,15 @@
                 codes: 'EZ8F6B3C',
                 cats: '46426'
             }),
-            
-            // Test selectors
-            getSelectors: () => ({
-                buttonId: '#smeetz-widget-button',
-                testId: '[data-testid="smeetz-book-button"]',
-                automation: '[data-automation="widget-button"]',
-                cssClass: '.smeetz-book-button'
-            }),
-            
-            // Enhanced wait function with promise support
-            waitForWidget: (timeout = 20000) => {
-                return new Promise((resolve) => {
-                    if (window.smeetzWidgetReady) {
-                        resolve(true);
-                        return;
-                    }
-                    
+            getTestState: () => window.smeetzTestState,
+            waitForWidget: (timeout = 15000) => {
+                return new Promise((resolve, reject) => {
                     const startTime = Date.now();
                     const checkReady = () => {
                         if (window.smeetzWidgetReady) {
                             resolve(true);
                         } else if (Date.now() - startTime > timeout) {
-                            resolve(false);
+                            reject(new Error('Widget load timeout'));
                         } else {
                             setTimeout(checkReady, 100);
                         }
@@ -528,59 +544,28 @@
                     checkReady();
                 });
             },
-            
-            // Test utilities
-            simulateClick: () => {
-                const button = document.getElementById('smeetz-widget-button');
-                if (button) {
-                    const event = new MouseEvent('click', {
-                        view: window,
-                        bubbles: true,
-                        cancelable: true
-                    });
-                    button.dispatchEvent(event);
-                    return true;
-                }
-                return false;
+            waitForIframe: (timeout = 10000) => {
+                return new Promise((resolve, reject) => {
+                    const startTime = Date.now();
+                    const checkIframe = () => {
+                        const iframe = document.querySelector('iframe.smtz-lightbox-iframe');
+                        if (iframe) {
+                            resolve(iframe);
+                        } else if (Date.now() - startTime > timeout) {
+                            reject(new Error('Iframe not found'));
+                        } else {
+                            setTimeout(checkIframe, 100);
+                        }
+                    };
+                    checkIframe();
+                });
             },
-            
-            // Health check
-            healthCheck: () => ({
-                widgetReady: window.smeetzWidgetReady,
-                loadTime: window.smeetzLoadTime,
-                readyTimestamp: widgetReadyTimestamp,
-                buttonExists: !!document.getElementById('smeetz-widget-button'),
-                smtzDefined: typeof window._smtz !== 'undefined'
-            }),
-            
-            // Zoom controls for testing
-            setZoom: (level) => {
-                updateZoom(level);
-                return currentZoom;
-            },
-            
-            getZoom: () => currentZoom,
-            
-            zoomOut: () => {
-                updateZoom(currentZoom - zoomStep);
-                return currentZoom;
-            },
-            
-            zoomIn: () => {
-                updateZoom(currentZoom + zoomStep);
-                return currentZoom;
-            },
-            
-            resetZoom: () => {
-                updateZoom(100);
-                return currentZoom;
-            }
+            getDebugLogs: () => window.smeetzTestState.logs,
+            simulateDay30Click: () => simulateCalendarClick()
         };
         
-        // Global console helper for manual testing
-        console.log('🚀 Smeetz Widget Test Environment Loaded');
-        console.log('💡 Use window.smeetzTestHelpers for testing utilities');
-        console.log('📋 Available methods:', Object.keys(window.smeetzTestHelpers));
+        // Log initial state
+        debugLog('Test page initialized', 'info');
     </script>
 </body>
 </html>
