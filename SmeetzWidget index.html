@@ -139,42 +139,22 @@
       Loading Widget... <span class="spinner"></span>
     </div>
 
-    <!-- Start Smeetz Embed Code (NEW) -->
-    <script>
-      !function(e, t, n, i, p, r, s) {
-        e[n] || ((p = e[n] = function() {
-        p.p ? p.p.apply(p, arguments) : p.q.push(arguments);
-        }).q = [], p.t = 1 * new Date(), p.g = "16342", (r = t.createElement("script")).async = 1,
-        r.src = "https://test.tracker.smeetz.com/smeetz-main-widget.js", (s = t.getElementsByTagName("script")[0]).parentNode.insertBefore(r, s));
-      }(window, document, "_smtz");
-    </script>
-
-    <a id="smeetz-widget-button"
+    <!-- Trigger Button -->
+    <a
+      id="smeetz-widget-button"
       class="smeetz-book-button"
       data-testid="smeetz-book-button"
-      data-smtz-gid="16342"
-      data-smtz-wid="313"
-      data-smtz-cart="1"
-      data-smtz-cart-lightbox="1"
-      target="_blank"
-      rel="noopener noreferrer"
-      aria-label="Open Smeetz booking widget"
-      onclick="event.preventDefault(); _smtz('openwidget', 1 * new Date(), {
-        productId: '39002',
-        lightbox: true,
-        listView: false,
-        gId: '16342',
-        wId: '313',
-        codes: 'EZ8F6B3C',
-        cats: '46426',
-        cart: '1',
-        linkText: 'en: ,,, fr: ,,, de: ,,, it: ',
-        linkUrl: 'en: ,,, fr: ,,, de: ,,, it: ',
-      });">
+      href="#"
+      onclick="event.preventDefault(); _smtz('openwidget');"
+    >
       📅 Book button
     </a>
-    <!-- End Smeetz Embed Code -->
 
+    <!-- New Widget Embed -->
+    <div class="smtz-w"
+      data-smtz-gid="16342"
+      data-smtz-wid="313">
+    </div>
   </div>
 
   <!-- Debug Panel -->
@@ -186,7 +166,17 @@
     <div id="debug-log"></div>
   </div>
 
-  <!-- Widget Script Enhancer -->
+  <!-- Widget Script -->
+  <script>
+    !function(e, t, n, i, p, r, s) {
+      e[n] || ((p = e[n] = function() {
+      p.p ? p.p.apply(p, arguments) : p.q.push(arguments);
+      }).q = [], p.t = 1 * new Date(), p.g = "16342", (r = t.createElement("script")).async = 1,
+      r.src = "https://test.tracker.smeetz.com/smeetz-main-widget.js", (s = t.getElementsByTagName("script")[0]).parentNode.insertBefore(r, s));
+    }(window, document, "_smtz");
+  </script>
+
+  <!-- Widget Status and Debug Logic -->
   <script>
     const statusElement = document.getElementById('widget-status');
 
