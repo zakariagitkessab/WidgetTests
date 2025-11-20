@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Smeetz Auto Tests Widget</title>
+  <title>Smeetz New Widget - Enhanced UI</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -55,7 +55,29 @@
       color: #084298;
       border: 1px solid #b6d4fe;
     }
-   
+    .smeetz-book-button {
+      color: #ffffff !important;
+      background: #8BDBE7 !important;
+      border: 1px solid #8BDBE7 !important;
+      padding: 15px 30px !important;
+      border-radius: 5px !important;
+      font-family: Helvetica, sans-serif !important;
+      font-size: 18px !important;
+      font-weight: bold !important;
+      cursor: pointer !important;
+      text-decoration: none !important;
+      display: inline-block !important;
+      transition: all 0.3s !important;
+      margin: 20px 0;
+    }
+    .smeetz-book-button:hover {
+      background: #7BC8D5 !important;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(139, 219, 231, 0.3);
+    }
+    .smeetz-book-button:active {
+      transform: translateY(0);
+    }
     .debug-panel {
       position: fixed;
       top: 20px;
@@ -119,9 +141,14 @@
 
     <!-- Trigger Button -->
     <a
-      
+      id="smeetz-widget-button"
+      class="smeetz-book-button"
+      data-testid="smeetz-book-button"
       href="#"
       onclick="event.preventDefault(); _smtz('openwidget');"
+    >
+      📅 Book button
+    </a>
 
     <!-- New Widget Embed -->
     <div class="smtz-w"
